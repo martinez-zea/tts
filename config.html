@@ -1,0 +1,73 @@
+<html>
+  <head>
+    <title>tweet2speach -- configuration</title>
+    <script>
+      var droid = new Android();
+	  var conf = function() {
+		  var username =  document.getElementById("username").value;
+		  var password = document.getElementById("password").value;
+		  var hashtag = document.getElementById("hashtag").value;
+
+		  var payload = '{"username":"'+username+ '", "password":"'+ password+'","hashtag":"'+hashtag+'" }';
+
+		  droid.eventPost("conf", payload);
+	  }
+
+	  var startReader = function(){
+	  	droid.eventPost("controlReader","True");
+	  }
+	  var stopReader = function(){
+		  droid.eventPost("controlReader","False");
+	  }
+
+	  var readerState = function(data){
+	  	document.getElementById("state").innerHTML = data.data;
+	  }
+
+	  var incomingTweet = function(data){
+	  	document.getElementById("tweet").innerHTML = data.data;
+	  }
+	  
+	  droid.registerCallback("readerState", readerState);
+	  droid.registerCallback("tweet", incomingTweet);
+    </script>
+  </head>
+  <body>
+	  <h1>tweet2speach configuration</h1>
+	  
+	  <form onsubmit="conf(); return false;">
+      	<label for="username">Username: </label>
+		<input type="text" id="username" />
+	    </br>	
+		<label for="password">Password: </label>
+		<input type="password" id="password"/>
+        </br>
+		<label for="hashtag">Hashtag: </label>
+		<input type="text" id="hashtag">
+        </br>
+      	<input type="submit" value="Save" />
+  	  </form>
+		
+	  <h1>controls <h1>
+	  <hr>
+  	 	<form onsubmit="startReader(); return false;">
+      	  <input type="submit" value="start reader" />
+	    </form>
+
+		<form onsubmit="stopReader(); return false;">
+      	  <input type="submit" value="stopt reader" />
+	    </form>
+      
+	  <hr>
+	  <h1>state</h1>
+	  <div id="state">please fill the fields of configuration form!</div>
+	  <hr>
+	  <h1>tweets</h1>
+	  <div id="tweet"></div>
+	 
+	 <pre>
+	 	martinez-zea [2012]
+		http://martinez-zea.info
+	 </pre>
+  </body>
+</html>
