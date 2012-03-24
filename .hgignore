@@ -13,3 +13,4 @@ web/src/web/web/src/web/local_settings.py
 libs/*
 web/src/web/site_media/media/*
 web/src/web/cache/*
+tmp/*

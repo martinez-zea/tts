@@ -1,67 +1,68 @@
-import tweetstream
+from collections import deque
 import os
-import json
-import ConfigParser
-
 import android
+import twitstream
+import json
 
-ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
 droid = android.Android()
-droid.makeToast('starting tweet2speach!')
-droid.webViewShow(os.path.join(ROOT_DIR, "config.html"))
+to_read = deque([])
 
-c = ConfigParser.ConfigParser()
-c.read('configuration.txt')
-info_saved = False
+def readTweet():
+	droid.eventPost('readerState', str(len(to_read)) + ' messages in queue')
+	if len(to_read) > 0:
+		try:
+			tmp = to_read.popleft()
+			droid.eventPost('tweet', tmp)
+			droid.ttsSpeak(tmp)
+		except Exception, err:
+			droid.eventPost('error', err)
+			pass
 
-if c.has_section('twitter'):
-	droid.eventPost('readerState', 'loaded twitter account data from file')
-	info_saved = True
-else:
-	c.add_section('twitter')
-	droid.eventPost('readerState','Please, fill the user / pass form')
+class Process(object):
+	def __init__(self, keywords=[]):
+		self.keywords = keywords
 
+	def __call__(self, status):
+		try:
+			st = status['text'].encode('utf-8')
+			to_read.append(st)
 
-while True:
+			if len(to_read) > 100:
+				droid.eventPost('readerState', 'Cleaning queue')
+				to_read.clear()
+				droid.eventPost('readerState', 'Queue cleaned!')
+
+			if not droid.ttsIsSpeaking()[1]:
+				readTweet()
+			else:
+				pass
+		except Exception, err:
+			droid.eventPost('error', err)
+			pass
+
+if __name__ == '__main__':
+	ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
+	
+	#initialize android api
+	droid. makeToast('starting tweet2speach!')
+	droid.webViewShow(os.path.join(ROOT_DIR, "interface.html"))
+	
+	hashtags = []
+
 	result = droid.eventWaitFor('conf').result
-	configuration = json.loads(result['data'])
-	
-	if info_saved:
-		user = c.get('twitter', 'username')
-		password = c.get('twitter', 'password')
-	else:
-		#plug the data from the form into variables
-		user = configuration['username']
-		password = configuration['password']
-		
-		c.set('twitter', 'username', user)
-		c.set('twitter', 'password', password)
-		
-		with open('configuration.txt','wb') as configfile:
-			c.write(configfile)
-
-	hashtag = [configuration['hashtag']]
-
 	controlReader = droid.eventWaitFor('controlReader').result
-	state = controlReader['data']
-	print state
 	
+	state = controlReader['data']
+	configuration = json.loads(result['data'])
+	user = configuration['username']
+	password = configuration['password']
+	hashtags.append(configuration['hashtag'])
 
+	processTweet = Process(hashtags)
 
-	if state == 'True':
-		droid.eventPost('readerState', 'Reader started')
-		with tweetstream.FilterStream(user,password, track=hashtag) as stream:
-			for tweet in stream:
-				try:					
-					t = tweet['text']
-					t.encode('ascii','replace')
-					droid.eventPost('tweet', t)
-					droid.ttsSpeak(t)
-				except:
-					pass
-
-
-	elif state == 'False':
-		droid.eventPost('readerState', 'Reader stopped')
-
-
+	#setup twitter connection
+	if state:
+		droid.eventPost('readerState','Reader started')
+		stream = twitstream.track(user, password, processTweet, hashtags)
+		stream.run()
+	

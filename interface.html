@@ -27,9 +27,14 @@
 	  var incomingTweet = function(data){
 	  	document.getElementById("tweet").innerHTML = data.data;
 	  }
-	  
+
+	  var errorMessage = function(data){
+		  document.getElementById("error").innerHTML = data.data;
+	  }
+
 	  droid.registerCallback("readerState", readerState);
 	  droid.registerCallback("tweet", incomingTweet);
+	  droid.registerCallback("error", errorMessage);
     </script>
   </head>
   <body>
@@ -45,7 +50,7 @@
 		<label for="hashtag">Hashtag: </label>
 		<input type="text" id="hashtag">
         </br>
-      	<input type="submit" value="Save" />
+      	<input type="submit" value="Log in!" />
   	  </form>
 		
 	  <h1>controls <h1>
@@ -54,17 +59,18 @@
       	  <input type="submit" value="start reader" />
 	    </form>
 
-		<form onsubmit="stopReader(); return false;">
-      	  <input type="submit" value="stopt reader" />
-	    </form>
-      
-	  <hr>
+	  <hr />
 	  <h1>state</h1>
 	  <div id="state">please fill the fields of configuration form!</div>
-	  <hr>
+	  
+	  <hr />
 	  <h1>tweets</h1>
 	  <div id="tweet"></div>
 	 
+	  <hr />
+	  <h1>Errors</h1>
+	  <div id="error"></div>
+
 	 <pre>
 	 	martinez-zea [2012]
 		http://martinez-zea.info
