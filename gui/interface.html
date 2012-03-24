@@ -1,7 +1,16 @@
 <html>
   <head>
-    <title>tweet2speach -- configuration</title>
-    <script>
+	  <title>tweet2speech -- configuration</title>
+	  <style type="text/css">
+		  body{
+			  background-color: black;
+			  color: white;
+			  font-family: "Courier New", Courier, monospace;
+			  margin-top: 2%;
+			  margin-bottom: 2%;
+		  }
+	  </style>  
+	<script>
       var droid = new Android();
 	  var conf = function() {
 		  var username =  document.getElementById("username").value;
@@ -38,22 +47,22 @@
     </script>
   </head>
   <body>
-	  <h1>tweet2speach configuration</h1>
-	  
-	  <form onsubmit="conf(); return false;">
-      	<label for="username">Username: </label>
-		<input type="text" id="username" />
-	    </br>	
-		<label for="password">Password: </label>
-		<input type="password" id="password"/>
-        </br>
-		<label for="hashtag">Hashtag: </label>
-		<input type="text" id="hashtag">
-        </br>
-      	<input type="submit" value="Log in!" />
+	  <center>
+	  	<h1>tweet2speech</h1>
+	  	<hr />  
+		<form onsubmit="conf(); return false;">
+      			<label for="username">Username: </label>
+				<input type="text" id="username" />
+	    		<br/><br />
+				<label for="password">Password: </label>
+				<input type="password" id="password"/>
+        		<br/><br />
+				<label for="hashtag">Hashtag: </label>
+				<input type="text" id="hashtag">
+        		<br/><br />
+				<input type="submit" value="Log in!" />
   	  </form>
 		
-	  <h1>controls <h1>
 	  <hr>
   	 	<form onsubmit="startReader(); return false;">
       	  <input type="submit" value="start reader" />
@@ -70,7 +79,8 @@
 	  <hr />
 	  <h1>Errors</h1>
 	  <div id="error"></div>
-
+	
+	  </center>
 	 <pre>
 	 	martinez-zea [2012]
 		http://martinez-zea.info
