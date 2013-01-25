@@ -1,0 +1,6 @@
+*.swp
+*.depend
+*.layout
+*.pyc
+*.pyo
+tmp/
